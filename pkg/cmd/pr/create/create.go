@@ -251,7 +251,7 @@ func createRun(opts *CreateOptions) error {
 		return err
 	}
 
-	interactive := isTerminal && !(opts.TitleProvided && opts.BodyProvided) && (prompt != "never")
+	interactive := isTerminal && !(opts.TitleProvided && opts.BodyProvided) && (prompt != config.NeverPrompt)
 
 	if !opts.WebMode && !opts.Autofill && interactive {
 		var nonLegacyTemplateFiles []string

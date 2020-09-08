@@ -10,7 +10,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const defaultGitProtocol = "https"
+const (
+	defaultGitProtocol = "https"
+	NeverPrompt        = "never"
+)
 
 // This interface describes interacting with some persistent configuration for gh.
 type Config interface {
