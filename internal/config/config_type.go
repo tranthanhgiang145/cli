@@ -168,6 +168,15 @@ func NewBlankRoot() *yaml.Node {
 						Value: "",
 					},
 					{
+						HeadComment: "Whether gh should use interactive prompts to gather user input. These interactive prompts can cause problems with screen readers and can be disabled by setting this to 'never'",
+						Kind:        yaml.ScalarNode,
+						Value:       "prompts",
+					},
+					{
+						Kind:  yaml.ScalarNode,
+						Value: "auto",
+					},
+					{
 						HeadComment: "Aliases allow you to create nicknames for gh commands",
 						Kind:        yaml.ScalarNode,
 						Value:       "aliases",
@@ -476,6 +485,8 @@ func defaultFor(key string) string {
 	switch key {
 	case "git_protocol":
 		return defaultGitProtocol
+	case "prompts":
+		return "auto"
 	default:
 		return ""
 	}

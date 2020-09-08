@@ -19,7 +19,7 @@ func Test_fileConfig_Set(t *testing.T) {
 	assert.NoError(t, c.Set("github.com", "user", "hubot"))
 	assert.NoError(t, c.Write())
 
-	expected := "# What protocol to use when performing git operations. Supported values: ssh, https\ngit_protocol: https\n# What editor gh should run when creating issues, pull requests, etc. If blank, will refer to environment.\neditor: nano\n# Aliases allow you to create nicknames for gh commands\naliases:\n    co: pr checkout\n"
+	expected := "# What protocol to use when performing git operations. Supported values: ssh, https\ngit_protocol: https\n# What editor gh should run when creating issues, pull requests, etc. If blank, will refer to environment.\neditor: nano\n# Whether gh should use interactive prompts to gather user input. These interactive prompts can cause problems with screen readers and can be disabled by setting this to 'never'\nprompts: auto\n# Aliases allow you to create nicknames for gh commands\naliases:\n    co: pr checkout\n"
 	assert.Equal(t, expected, mainBuf.String())
 	assert.Equal(t, `github.com:
     git_protocol: ssh
@@ -37,7 +37,7 @@ func Test_defaultConfig(t *testing.T) {
 	cfg := NewBlankConfig()
 	assert.NoError(t, cfg.Write())
 
-	expected := "# What protocol to use when performing git operations. Supported values: ssh, https\ngit_protocol: https\n# What editor gh should run when creating issues, pull requests, etc. If blank, will refer to environment.\neditor:\n# Aliases allow you to create nicknames for gh commands\naliases:\n    co: pr checkout\n"
+	expected := "# What protocol to use when performing git operations. Supported values: ssh, https\ngit_protocol: https\n# What editor gh should run when creating issues, pull requests, etc. If blank, will refer to environment.\neditor:\n# Whether gh should use interactive prompts to gather user input. These interactive prompts can cause problems with screen readers and can be disabled by setting this to 'never'\nprompts: auto\n# Aliases allow you to create nicknames for gh commands\naliases:\n    co: pr checkout\n"
 	assert.Equal(t, expected, mainBuf.String())
 	assert.Equal(t, "", hostsBuf.String())
 
@@ -48,6 +48,10 @@ func Test_defaultConfig(t *testing.T) {
 	editor, err := cfg.Get("", "editor")
 	assert.Nil(t, err)
 	assert.Equal(t, "", editor)
+
+	prompt, err := cfg.Get("", "prompts")
+	assert.Nil(t, err)
+	assert.Equal(t, "auto", prompt)
 
 	aliases, err := cfg.Aliases()
 	assert.Nil(t, err)

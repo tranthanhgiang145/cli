@@ -110,7 +110,7 @@ github.com:
 	_, err := ParseConfig("config.yml")
 	assert.Nil(t, err)
 
-	expectedMain := "# What protocol to use when performing git operations. Supported values: ssh, https\ngit_protocol: https\n# What editor gh should run when creating issues, pull requests, etc. If blank, will refer to environment.\neditor:\n# Aliases allow you to create nicknames for gh commands\naliases:\n    co: pr checkout\n"
+	expectedMain := "# What protocol to use when performing git operations. Supported values: ssh, https\ngit_protocol: https\n# What editor gh should run when creating issues, pull requests, etc. If blank, will refer to environment.\neditor:\n# Whether gh should use interactive prompts to gather user input. These interactive prompts can cause problems with screen readers and can be disabled by setting this to 'never'\nprompts: auto\n# Aliases allow you to create nicknames for gh commands\naliases:\n    co: pr checkout\n"
 	expectedHosts := `github.com:
     user: keiyuri
     oauth_token: "123456"
