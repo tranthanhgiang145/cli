@@ -27,6 +27,7 @@ type LoginOptions struct {
 	Hostname     string
 	Token        string
 	OnlyValidate bool
+	Web          bool
 }
 
 func NewCmdLogin(f *cmdutil.Factory, runF func(*LoginOptions) error) *cobra.Command {
@@ -68,6 +69,9 @@ func NewCmdLogin(f *cmdutil.Factory, runF func(*LoginOptions) error) *cobra.Comm
 
 			wt, _ := cmd.Flags().GetBool("with-token")
 			if wt {
+				if cmd.Flags().Changed("web") {
+					return &cmdutil.FlagError{Err: errors.New("specify only one of --web or --with-token")}
+				}
 				defer opts.IO.In.Close()
 				token, err := ioutil.ReadAll(opts.IO.In)
 				if err != nil {
@@ -95,6 +99,7 @@ func NewCmdLogin(f *cmdutil.Factory, runF func(*LoginOptions) error) *cobra.Comm
 		},
 	}
 
+	cmd.Flags().BoolVarP(&opts.Web, "web", "w", false, "Always open browser to authenticate")
 	cmd.Flags().StringVarP(&opts.Hostname, "hostname", "h", "", "The hostname of the GitHub instance to authenticate with")
 	cmd.Flags().Bool("with-token", false, "Read token from standard input")
 
@@ -198,15 +203,19 @@ func loginRun(opts *LoginOptions) error {
 	}
 
 	var authMode int
-	err = prompt.SurveyAskOne(&survey.Select{
-		Message: "How would you like to authenticate?",
-		Options: []string{
-			"Login with a web browser",
-			"Paste an authentication token",
-		},
-	}, &authMode)
-	if err != nil {
-		return fmt.Errorf("could not prompt: %w", err)
+	if opts.Web {
+		authMode = 0
+	} else {
+		err = prompt.SurveyAskOne(&survey.Select{
+			Message: "How would you like to authenticate?",
+			Options: []string{
+				"Login with a web browser",
+				"Paste an authentication token",
+			},
+		}, &authMode)
+		if err != nil {
+			return fmt.Errorf("could not prompt: %w", err)
+		}
 	}
 
 	if authMode == 0 {

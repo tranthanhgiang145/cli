@@ -116,6 +116,13 @@ func Test_NewCmdLogin(t *testing.T) {
 				OnlyValidate: true,
 			},
 		},
+		{
+			name:     "web and with-token",
+			stdinTTY: true,
+			cli:      "--web --with-token",
+			ghtoken:  "abc123",
+			wantsErr: true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -160,6 +167,7 @@ func Test_NewCmdLogin(t *testing.T) {
 
 			assert.Equal(t, tt.wants.Token, gotOpts.Token)
 			assert.Equal(t, tt.wants.Hostname, gotOpts.Hostname)
+			assert.Equal(t, tt.wants.Web, gotOpts.Web)
 		})
 	}
 }
