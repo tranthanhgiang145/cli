@@ -241,7 +241,17 @@ func createRun(opts *CreateOptions) error {
 		Milestones: milestoneTitles,
 	}
 
-	interactive := isTerminal && !(opts.TitleProvided && opts.BodyProvided)
+	cfg, err := opts.Config()
+	if err != nil {
+		return err
+	}
+
+	prompt, err := cfg.Get(headRepo.RepoHost(), "prompts")
+	if err != nil {
+		return err
+	}
+
+	interactive := isTerminal && !(opts.TitleProvided && opts.BodyProvided) && (prompt != "never")
 
 	if !opts.WebMode && !opts.Autofill && interactive {
 		var nonLegacyTemplateFiles []string
@@ -312,10 +322,6 @@ func createRun(opts *CreateOptions) error {
 	// In either case, we want to add the head repo as a new git remote so we
 	// can push to it.
 	if headRemote == nil {
-		cfg, err := opts.Config()
-		if err != nil {
-			return err
-		}
 		cloneProtocol, _ := cfg.Get(headRepo.RepoHost(), "git_protocol")
 
 		headRepoURL := ghrepo.FormatRemoteURL(headRepo, cloneProtocol)
