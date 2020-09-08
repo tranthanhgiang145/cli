@@ -13,6 +13,7 @@ import (
 const (
 	defaultGitProtocol = "https"
 	NeverPrompt        = "never"
+	AutoPrompt         = "auto"
 )
 
 // This interface describes interacting with some persistent configuration for gh.
@@ -489,7 +490,7 @@ func defaultFor(key string) string {
 	case "git_protocol":
 		return defaultGitProtocol
 	case "prompts":
-		return "auto"
+		return AutoPrompt
 	default:
 		return ""
 	}

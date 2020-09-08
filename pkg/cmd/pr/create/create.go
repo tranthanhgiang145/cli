@@ -246,7 +246,7 @@ func createRun(opts *CreateOptions) error {
 		return err
 	}
 
-	prompt, err := cfg.Get(headRepo.RepoHost(), "prompts")
+	prompt, err := cfg.Get(baseRepo.RepoHost(), "prompts")
 	if err != nil {
 		return err
 	}
