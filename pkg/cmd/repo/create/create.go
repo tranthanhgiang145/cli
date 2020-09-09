@@ -147,6 +147,21 @@ func createRun(opts *CreateOptions) error {
 		isVisibilityPassed = true
 	}
 
+	cfg, err := opts.Config()
+	if err != nil {
+		return err
+	}
+
+	prompts, err := cfg.Get("", "prompts")
+	if err != nil {
+		return err
+	}
+
+	if (prompts == config.NeverPrompt) && (!isNameAnArg || !isVisibilityPassed) {
+		// TODO: Create better error message(s) when name and/or visibility are not present
+		return fmt.Errorf("provide name and visibility flags")
+	}
+
 	// Trigger interactive prompt if name is not passed
 	if !isNameAnArg {
 		newName, newDesc, newVisibility, err := interactiveRepoCreate(isDescEmpty, isVisibilityPassed, repoToCreate.RepoName())
@@ -245,11 +260,6 @@ func createRun(opts *CreateOptions) error {
 			fmt.Fprintln(stdout, repo.URL)
 		}
 
-		// TODO This is overly wordy and I'd like to streamline this.
-		cfg, err := opts.Config()
-		if err != nil {
-			return err
-		}
 		protocol, err := cfg.Get(repo.RepoHost(), "git_protocol")
 		if err != nil {
 			return err
@@ -346,7 +356,6 @@ func interactiveRepoCreate(isDescEmpty bool, isVisibilityPassed bool, repoName s
 	}
 
 	return answers.RepoOwner, answers.RepoDescription, strings.ToUpper(answers.RepoVisibility), nil
-
 }
 
 func confirmSubmission(repoName string, repoOwner string, isConfirmFlagPassed *bool) (bool, error) {
