@@ -148,7 +148,17 @@ func createRun(opts *CreateOptions) error {
 	title := opts.Title
 	body := opts.Body
 
-	interactive := !(opts.TitleProvided && opts.BodyProvided)
+	cfg, err := opts.Config()
+	if err != nil {
+		return err
+	}
+
+	prompt, err := cfg.Get("", "prompts")
+	if err != nil {
+		return err
+	}
+
+	interactive := !(opts.TitleProvided && opts.BodyProvided) && (prompt != config.NeverPrompt)
 
 	if interactive && !isTerminal {
 		return fmt.Errorf("must provide --title and --body when not attached to a terminal")
