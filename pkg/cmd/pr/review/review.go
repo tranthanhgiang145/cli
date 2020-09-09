@@ -103,6 +103,21 @@ func NewCmdReview(f *cmdutil.Factory, runF func(*ReviewOptions) error) *cobra.Co
 				}
 			}
 
+			cfg, err := opts.Config()
+			if err != nil {
+				return err
+			}
+
+			prompt, err := cfg.Get("", "prompts")
+			if err != nil {
+				return err
+			}
+
+			if (prompt == config.NeverPrompt) && found != 1 {
+				// TODO: Create better error message(s)
+				return &cmdutil.FlagError{Err: errors.New("need exactly one of --approve, --request-changes, or --comment")}
+			}
+
 			if found == 0 && opts.Body == "" {
 				if !opts.IO.IsStdoutTTY() || !opts.IO.IsStdinTTY() {
 					return &cmdutil.FlagError{Err: errors.New("--approve, --request-changes, or --comment required when not attached to a tty")}
